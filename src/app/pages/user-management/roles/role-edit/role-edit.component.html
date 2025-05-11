@@ -1,0 +1,16 @@
+<form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
+    <div>
+        <label for="id">ID:</label>
+        <input type="text" id="id" formControlName="id" />
+    </div>
+    <div>
+        <label for="email">Name:</label>
+        <input type="email" id="email" formControlName="Name" required />
+    </div>
+    <div>
+        <label for="firstName">Description:</label>
+        <input type="text" id="firstName" formControlName="Description" />
+    </div>
+    <button type="submit" [disabled]="roleForm.invalid">Save</button>
+    <button type="button" (click)="onReset()">Reset</button>
+</form>
