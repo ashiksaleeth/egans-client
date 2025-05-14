@@ -4,14 +4,14 @@
             <div class="card-header align-items-center d-flex">
                 <h4 class="card-title mb-0 flex-grow-1">Users</h4>
             </div><!-- end card header -->
-            <div>
-                <button *ngIf="resourceConstants.USER | hasCreatePermission" type="button" class="btn btn-primary mb-3"
-                    (click)="addUser()">Add User</button>
+            <div class="align-items-center justify-content-end m-2 d-flex">
+                <button *ngIf="resourceConstants.USER | hasCreatePermission" type="button"
+                    class="btn btn-light m-2 mx-3" (click)="addUser()">Add New User</button>
             </div>
             <div class="card-body">
                 <div class="live-preview">
                     <div class="table-responsive table-card">
-                        <table class="table align-middle table-nowrap table-striped-columns mb-0">
+                        <table class="table align-middle table-nowrap mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th scope="col">Email</th>

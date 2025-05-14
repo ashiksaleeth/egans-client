@@ -1,20 +1,46 @@
-<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-    <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" formControlName="Email" required />
+<div class="row">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">User List Save</h4>
+            </div>
+            <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+                <div class="row m-3">
+                    <div class="col-md-4">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" formControlName="Email" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" formControlName="FirstName" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" formControlName="LastName" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="mobileNo" class="form-label">Mobile No</label>
+                        <input type="text" class="form-control" id="mobileNo" formControlName="MobileNo" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <label for="choices-multiple-remove-button" class="form-label text-muted"> Roles </label>
+                            <p class="text-muted">Set <code>data-choices data-choices-removeItem multiple</code>
+                                attribute.</p>
+                            <ng-select [items]="roleList" [multiple]="true"></ng-select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button *ngIf="resourceConstants.USER | hasCreatePermission" type="submit"
+                            class="btn btn-primary me-2" [disabled]="userForm.invalid">
+                            Save
+                        </button>
+                        <button type="button" class="btn btn-light" (click)="onReset()">Reset</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-    <div>
-        <label for="firstName">First Name:</label>
-        <input type="text" id="firstName" formControlName="FirstName" />
-    </div>
-    <div>
-        <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" formControlName="LastName" />
-    </div>
-    <div>
-        <label for="mobileNo">Mobile No:</label>
-        <input type="text" id="mobileNo" formControlName="MobileNo" />
-    </div>
-    <button *ngIf="resourceConstants.USER | hasCreatePermission" type="submit" [disabled]="userForm.invalid">Save</button>
-    <button type="button" (click)="onReset()">Reset</button>
-</form>
+</div>

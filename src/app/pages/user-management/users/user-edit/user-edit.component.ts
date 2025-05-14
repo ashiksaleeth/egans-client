@@ -50,6 +50,8 @@ export class UserEditComponent {
   date: any;
   status: any = '';
 
+  roleList: any = [];
+
   
 resourceConstants = RESOURCES;
 
@@ -74,11 +76,18 @@ resourceConstants = RESOURCES;
      * Form Validation
      */
     this.userForm = this.formBuilder.group({
-      id: [''],
+      id: [0],
       Email: ['', [Validators.required]],
       FirstName: [''],
       LastName: [''],
       MobileNo: ['']
+    });
+  }
+
+  getAllRoles() {
+    this.userManagementService.getRoles().subscribe((res: any) => {
+      console.log(res);
+      this.roleList = res;
     });
   }
 

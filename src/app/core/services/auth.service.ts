@@ -12,7 +12,8 @@ export interface UserRole {
 }
 
 export interface UserResource {
-  resourceName: string;
+  id: number;
+  name: string;
   canRead: boolean;
   canDelete: boolean;
   canUpdate: boolean;
@@ -24,12 +25,12 @@ export interface UserResource {
 })
 export class AuthenticationService {
   private userProfile = new BehaviorSubject<KeycloakProfile | null>(null);
-  private userRole = new BehaviorSubject<UserRole | null>(null);
+  private defaultRoute = new BehaviorSubject<string>("");
 
   public userResources: UserResource[] = [];
   
   userProfile$ = this.userProfile.asObservable();
-  userRole$ = this.userRole.asObservable();
+  defaultRoute$ = this.defaultRoute.asObservable();
 
   constructor(
     private keycloak: KeycloakService,
@@ -61,18 +62,17 @@ export class AuthenticationService {
     );
   }
 
-  getUserRoles(): Observable<UserResource[]> {
-    // Replace with your actual API endpoint
-    return this.http.get<UserResource[]>('https://localhost:44381/api/User/1/resources').pipe(
-      tap(userRole => {
-        this.userRole.next({defaultRoute: '/user-management/user-list', role: "test-role"});
-        this.userResources = userRole;
+  getPermissions(): Observable<UserResource[]> {
+    return this.http.get<{resources: UserResource[],  roles: [], landingPageResourceId: number}>('https://localhost:44381/api/User/1/resources').pipe(
+      tap(permissions => {
+        const defaultRoute = permissions.resources.find(resource => resource.id === permissions.landingPageResourceId);
+        this.defaultRoute.next('/user-management/user-list');
+        this.userResources = permissions.resources;
       }),
+      map(permissions => permissions.resources),
       catchError(error => {
         console.error('Error fetching user role:', error);
-        // Provide a default role in case of error
-        const defaultRole: UserRole = { role: 'user', defaultRoute: '/dashboard' };
-        this.userRole.next(defaultRole);
+        this.defaultRoute.next('/user-management/user-list');
         return of([]);
       })
     );
@@ -80,7 +80,7 @@ export class AuthenticationService {
 
   routeBasedOnRole(): Observable<boolean> {
     return this.loadUserProfile().pipe(
-      switchMap(() => this.getUserRoles()),
+      switchMap(() => this.getPermissions()),
       map(userRole => {
         this.router.navigate(['/user-management/user-list']);
         return true;
@@ -107,22 +107,22 @@ export class AuthenticationService {
 
   //region authorization methods
   hasReadAccess(resourceName: string): boolean {
-    const resource = this.userResources.find((resource: UserResource) => resource.resourceName === resourceName);
+    const resource = this.userResources.find((resource: UserResource) => resource.name === resourceName);
     return resource ? resource.canRead : false;
   }
 
   hasCreateAccess(resourceName: string): boolean {
-    const resource = this.userResources.find((resource: UserResource) => resource.resourceName === resourceName);
+    const resource = this.userResources.find((resource: UserResource) => resource.name === resourceName);
     return resource ? resource.canCreate : false;
   }
 
   hasUpdateAccess(resourceName: string): boolean {
-    const resource = this.userResources.find((resource: UserResource) => resource.resourceName === resourceName);
+    const resource = this.userResources.find((resource: UserResource) => resource.name === resourceName);
     return resource ? resource.canUpdate : false;
   }
 
   hasDeleteAccess(resourceName: string): boolean {
-    const resource = this.userResources.find((resource: UserResource) => resource.resourceName === resourceName);
+    const resource = this.userResources.find((resource: UserResource) => resource.name === resourceName);
     return resource ? resource.canDelete : false;
   }
 }
